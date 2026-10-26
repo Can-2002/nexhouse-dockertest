@@ -1,0 +1,27 @@
+{
+  "name": "Nexhouse Django",
+  "initializeCommand": "docker compose -f compose.setup.yaml run --rm setup",
+  "dockerComposeFile": ["../compose.yaml"],
+  "service": "web",
+  "workspaceFolder": "/workspace",
+  "overrideCommand": false,
+  "shutdownAction": "stopCompose",
+  "remoteUser": "app",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {"label": "Nexhouse", "onAutoForward": "notify", "visibility": "private"}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "charliermarsh.ruff", "ms-azuretools.vscode-docker"],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {"source.organizeImports.ruff": "explicit"}
+        }
+      }
+    }
+  }
+}

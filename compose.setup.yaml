@@ -1,0 +1,8 @@
+# Separat, weil compose.yaml bereits eine vorhandene .env voraussetzt.
+services:
+  setup:
+    image: python:3.12.14-slim-bookworm
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: ["python", "scripts/setup.py"]
