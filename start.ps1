@@ -9,4 +9,6 @@ docker compose -f compose.setup.yaml run --rm setup
 if ($LASTEXITCODE -ne 0) { throw 'Einrichtung fehlgeschlagen.' }
 docker compose up --build --wait --wait-timeout 180
 if ($LASTEXITCODE -ne 0) { throw 'Start fehlgeschlagen. Diagnose: docker compose logs' }
-Write-Host 'Nexhouse ist bereit. Standardadresse: http://localhost:8000 (WEB_PORT in .env beachten).'
+docker compose exec -T dev python scripts/check_environment.py
+if ($LASTEXITCODE -ne 0) { throw 'Umgebungspruefung fehlgeschlagen.' }
+Write-Host 'Entwicklungsumgebung bereit. Terminal oeffnen: docker compose exec dev bash'

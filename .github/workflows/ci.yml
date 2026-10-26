@@ -11,18 +11,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Lokale Konfiguration erzeugen
         run: docker compose -f compose.setup.yaml run --rm setup
-      - name: Images bauen und Anwendung starten
+      - name: Entwicklungsumgebung bauen und starten
         run: docker compose up --build --wait --wait-timeout 180
       - name: Code prüfen
         run: |
-          docker compose exec -T web ruff check .
-          docker compose exec -T web ruff format --check .
-          docker compose exec -T web python manage.py check
-          docker compose exec -T web python manage.py makemigrations --check --dry-run
-      - name: Tests mit PostgreSQL
-        run: docker compose exec -T web python manage.py test --noinput
-      - name: HTTP prüfen
-        run: curl --fail --retry 5 --retry-delay 2 http://localhost:8000/health/
+          docker compose exec -T dev ruff check .
+          docker compose exec -T dev ruff format --check .
+          docker compose exec -T dev python -m pip check
+      - name: Python, Django und PostgreSQL prüfen
+        run: docker compose exec -T dev python scripts/check_environment.py
       - name: Diagnose bei Fehlern
         if: failure()
         run: docker compose logs

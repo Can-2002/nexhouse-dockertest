@@ -1,37 +1,42 @@
 # Erklärung der verschiedenen Module
 
-Das Repository enthält sowohl die gemeinsame Entwicklungsumgebung als auch ein
-erstes Django-Anwendungsgerüst. Für eine reine Entwicklungsumgebung wären die
-vorbereiteten Anwendungsmodule noch nicht notwendig.
+Dieses Repository enthält nur die gemeinsame Entwicklungsumgebung. Django ist
+installiert, aber es wurde kein Django-Projekt angelegt. Die Architektur und die
+Anwendungsmodule werden erst gemeinsam im Team festgelegt.
 
 | Ordner / Datei | Aufgabe |
 | --- | --- |
-| `Dockerfile` | Definiert die Entwicklungsumgebung: Python-Version, Werkzeuge und Installation der Requirements. |
-| `compose.yaml` | Startet Django und PostgreSQL gemeinsam. Die Datenbankdaten bleiben in einem Docker-Volume erhalten. |
-| `.devcontainer/` | Verbindet VS Code und GitHub Codespaces mit dieser Docker-Umgebung, einschließlich gemeinsamer Editor-Erweiterungen. |
-| `requirements.txt` / `requirements-dev.txt` | Legen die Python-Pakete und ihre Versionen fest. Die zweite Datei ergänzt Entwicklungswerkzeuge wie Ruff. |
-| `.env` / `.env.example` | Enthalten lokale Einstellungen wie Datenbankzugang; `.env.example` ist die teilbare Vorlage. Die echte `.env` wird bei der Einrichtung erzeugt und nicht zu GitHub hochgeladen. |
-| `scripts/`, `start.ps1`, `start.sh`, `compose.setup.yaml` | Vereinfachen den ersten Start: Einstellungen erzeugen, Container bauen und Anwendung starten. Diese Dateien sind Komforthelfer. |
-| `config/` und `manage.py` | Bilden das eigentliche Django-Projekt: Einstellungen, URLs und Verwaltungsbefehle. Das geht über die reine Entwicklungsumgebung hinaus. |
-| `accounts/` | Enthält ein vorbereitetes eigenes Django-Benutzermodell. Das ist bereits Anwendungsentwicklung. |
-| `core/` | Enthält die Ansicht für eine Startseite, eine Datenbank-Verbindungsprüfung und sechs Tests. Ebenfalls bereits Anwendungscode. |
-| `templates/` | Enthält das HTML der einfachen Startseite. |
-| `.github/` | Enthält automatische Prüfungen, die bei Pushes und Pull Requests auf GitHub laufen sollen. |
-| `pyproject.toml`, `.editorconfig`, `.gitattributes` | Regeln Codeformatierung, Einrückungen und Zeilenenden, damit alle einheitlich arbeiten. |
-| `.gitignore` / `.dockerignore` | Verhindern, dass lokale Geheimnisse und unnötige Dateien in Git beziehungsweise ins Docker-Image gelangen. |
-| `README.md` / `docs/` | Enthalten die Startanleitung und die Dokumentation der bisherigen Prüfungen. |
-| `.venv/` / `.ruff_cache/` | Sind die lokale Python-Testumgebung und ein Werkzeug-Cache auf dem Einrichtungsrechner. Für den Docker-Start sind beide unnötig und werden nicht mit hochgeladen. |
-| `.git/` | Speichert die lokale Git-Verwaltung und die Verbindung zum GitHub-Repository. Dieser Ordner wird von Git selbst verwaltet. |
+| `Dockerfile` | Legt Python und die installierten Werkzeuge fest. Der Container bleibt als Arbeitsumgebung aktiv und startet keine Anwendung. |
+| `compose.yaml` | Startet die Entwicklungsumgebung und PostgreSQL. Daten bleiben in einem Docker-Volume erhalten. |
+| `.devcontainer/` | Bindet dieselbe Umgebung in VS Code und GitHub Codespaces ein und legt Editor-Erweiterungen fest. |
+| `requirements.txt` | Legt Django, den PostgreSQL-Treiber und ihre Abhängigkeiten mit festen Versionen fest. |
+| `requirements-dev.txt` | Ergänzt Ruff als Werkzeug für Formatierung und Codeprüfung. |
+| `.env` / `.env.example` | Enthalten persönliche Datenbankeinstellungen beziehungsweise deren teilbare Vorlage. Die echte `.env` wird nicht gepusht. |
+| `scripts/setup.py` / `compose.setup.yaml` | Erzeugen bei der ersten Einrichtung eine `.env` mit zufälligem Datenbankpasswort. Vorhandene Einstellungen bleiben erhalten. |
+| `scripts/check_environment.py` | Zeigt Python-/Django-Versionen und prüft die PostgreSQL-Verbindung. Es legt keine Tabellen oder Anwendung an. |
+| `start.ps1` / `start.sh` | Fassen Einrichtung, Containerstart und Umgebungsprüfung für Windows beziehungsweise macOS/Linux zusammen. |
+| `.github/` | Prüft die Entwicklungsumgebung nach Pushes und bei Pull Requests automatisch. |
+| `pyproject.toml`, `.editorconfig`, `.gitattributes` | Vereinheitlichen Codeformatierung, Einrückungen und Zeilenenden. |
+| `.gitignore` / `.dockerignore` | Schließen lokale Geheimnisse und unnötige Dateien aus Git beziehungsweise Docker-Builds aus. |
+| `README.md` | Erklärt Installation, Codespaces und die wichtigsten Befehle. |
+| `.git/` | Wird von Git verwaltet und enthält die lokale Versionshistorie sowie die GitHub-Verbindung. |
+
+## Was ist notwendig, was ist Komfort?
+
+Dockerfile, Requirements und Compose bilden die technische Grundlage inklusive
+PostgreSQL. Die Dev-Container-Konfiguration ermöglicht den vereinbarten Einstieg
+über VS Code und Codespaces. Startskripte, automatische Prüfungen und gemeinsame
+Formatierungsregeln erleichtern Einrichtung und Zusammenarbeit.
+
+## Was wurde entfernt?
+
+Das vorzeitig angelegte Django-Projekt (`config`, `manage.py`), die Benutzerverwaltung
+(`accounts`), die Startseite und Anwendungstests (`core`, `templates`) sowie das
+Django-Startskript wurden entfernt. Die alte Prüfdokumentation wurde durch den aktuellen
+Prüfstand in der README ersetzt. Django selbst bleibt als installiertes Paket erhalten.
 
 ## Brauchen wir eine `.venv`?
 
-Für die Entwicklung mit Docker braucht ihr keine zusätzliche lokale `.venv`.
-Sie wurde auf dem Einrichtungsrechner ausschließlich zum Prüfen des Django-Codes
-angelegt, weil dort Docker noch nicht verfügbar war. In Docker und Codespaces
-werden die Requirements bereits im Container installiert.
-
-## Wo fangen neue Teammitglieder an?
-
-Die [README](README.md) beschreibt den Start unter Windows, macOS/Linux, VS Code
-und GitHub Codespaces. Der [Prüfstand](docs/VALIDATION.md) unterscheidet bereits
-bestandene Prüfungen von noch ausstehenden Container- und Codespaces-Tests.
+Nein. Docker und Codespaces installieren die Pakete im Container. Eine eventuell
+noch vorhandene lokale `.venv` und `.ruff_cache` stammen von lokalen Prüfungen,
+sind nicht im Repository und können bei Nichtgebrauch gelöscht werden.

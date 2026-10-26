@@ -11,9 +11,6 @@ if target.exists():
 else:
     content = (root / ".env.example").read_text(encoding="utf-8")
     content = content.replace(
-        "DJANGO_SECRET_KEY=replace-me", "DJANGO_SECRET_KEY=" + secrets.token_hex(32)
-    )
-    content = content.replace(
         "POSTGRES_PASSWORD=replace-me", "POSTGRES_PASSWORD=" + secrets.token_hex(24)
     )
     with target.open("x", encoding="utf-8", newline="\n") as output:

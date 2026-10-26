@@ -1,19 +1,16 @@
-# Nexhouse – gemeinsame Django-Entwicklungsumgebung
+# Nexhouse – gemeinsame Entwicklungsumgebung
 
-Dieses Repository ist das technische Grundgerüst für unsere Immobilienverwaltung.
-Es enthält eine Startseite, eine Datenbank-Verbindungsprüfung und die Django-Verwaltung.
-Objektverwaltung, Buchhaltung, Tickets und Mandantentrennung sind noch nicht implementiert.
+Dieses Repository stellt Python, Django, PostgreSQL und Entwicklungswerkzeuge bereit.
+Es enthält **kein Django-Projekt, keine Benutzerverwaltung, keine Startseite und keine
+Fachmodule**. Die Projektstruktur legen wir später gemeinsam im Team fest.
 
-Eine Übersicht der Dateien und Ordner steht in
-[Erklärung der verschiedenen Module](Erklärung%20der%20verschiedenen%20Module.md).
+Eine Übersicht steht in [Erklärung der verschiedenen Module](Erklärung%20der%20verschiedenen%20Module.md).
 
-## Schnellstart zum Ausprobieren (Windows)
+## Windows: installieren und prüfen
 
-1. [Git für Windows](https://git-scm.com/downloads/win) und
-   [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) installieren.
-   Bei Docker die Einrichtung mit WSL 2 abschließen und gegebenenfalls neu starten.
-2. Docker Desktop öffnen und warten, bis die Engine läuft. Linux-Container verwenden.
-3. PowerShell öffnen und das Repository herunterladen:
+1. [Git](https://git-scm.com/downloads/win) und [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/)
+   installieren. Die WSL-2-Einrichtung abschließen und Docker Desktop starten (Linux-Container).
+2. PowerShell öffnen:
 
    ```powershell
    git clone https://github.com/Can-2002/nexhouse-dockertest.git
@@ -21,176 +18,112 @@ Eine Übersicht der Dateien und Ordner steht in
    powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1
    ```
 
-   Wer das Repository bereits hat, öffnet PowerShell im vorhandenen Projektordner
-   und führt nur den letzten Befehl aus. Nicht ein zweites Repository hinein klonen.
-   Die ExecutionPolicy-Option gilt nur für diesen Prozess und verändert keine
-   dauerhafte Systemeinstellung.
+   Bei einem vorhandenen Klon nur das Startskript im Projektordner ausführen.
+   `ExecutionPolicy Bypass` gilt hier nur für diesen Prozess.
+3. Das Skript erstellt bei Bedarf `.env`, baut die Umgebung und prüft die Installation
+   sowie die Datenbankverbindung. Erfolg: **Entwicklungsumgebung bereit**.
+4. Ein Terminal in der Umgebung öffnen:
 
-4. Nach der Erfolgsmeldung [http://localhost:8000](http://localhost:8000) öffnen.
-5. Für den Zugang zur Verwaltung einmal einen eigenen Administrator anlegen:
-
-   ```powershell
-   docker compose exec web python manage.py createsuperuser
+   ```sh
+   docker compose exec dev bash
    ```
 
-   Benutzername, optionale E-Mail und Passwort eingeben. Beim Passwort werden keine
-   Zeichen angezeigt. Danach unter [http://localhost:8000/admin/](http://localhost:8000/admin/)
-   anmelden. Es gibt kein gemeinsames Standardpasswort.
+Python und PostgreSQL müssen nicht lokal installiert werden. Der erste Aufbau benötigt
+Internetzugang und kann einige Minuten dauern. Eine lokale `.venv` ist nicht erforderlich.
+**Es läuft noch keine Website; im Browser gibt es deshalb keine Startseite.**
 
-Python und PostgreSQL müssen nicht auf dem Rechner installiert werden. Docker lädt
-die benötigten Images und installiert die Python-Pakete beim ersten Start; das dauert
-einige Minuten und benötigt Internetzugang. Spätere Starts sind schneller.
+## macOS / Linux
 
-## macOS und Linux
-
-Git und Docker mit Compose v2 installieren, Docker starten, Repository klonen und
-im Projektordner ausführen:
+Git und Docker mit Compose v2 installieren und starten, Repository klonen und im
+Projektordner ausführen:
 
 ```sh
 sh start.sh
-docker compose exec web python manage.py createsuperuser
 ```
 
-## Entwickeln mit VS Code auf dem eigenen Rechner
+## VS Code lokal
 
-1. [VS Code](https://code.visualstudio.com/) und die Erweiterung
-   **Dev Containers** (`ms-vscode-remote.remote-containers`) installieren.
-2. Den geklonten Projektordner in VS Code öffnen.
-3. `Strg+Umschalt+P` → **Dev Containers: Reopen in Container** auswählen.
-4. Die Einrichtung erzeugt bei Bedarf `.env`, baut die Umgebung und startet Django
-   sowie PostgreSQL. Der erste Aufbau benötigt Internetzugang.
-5. Im VS-Code-Terminal läuft man bereits im Anwendungscontainer. Dort Befehle ohne
-   `docker compose exec web` verwenden:
+1. VS Code und die Erweiterung **Dev Containers** (`ms-vscode-remote.remote-containers`) installieren.
+2. Projektordner öffnen und **Dev Containers: Reopen in Container** über die Befehlspalette auswählen.
+3. Nach dem Aufbau im VS-Code-Terminal prüfen:
 
    ```sh
-   python manage.py createsuperuser
-   python manage.py test
-   ruff check .
-   ruff format .
+   python scripts/check_environment.py
    ```
 
-Der Quellcode bleibt im Projektordner und wird in den Container eingebunden.
-Django lädt Python-Änderungen automatisch neu. Das gilt auch, wenn man die Umgebung
-über das Startskript startet und den Ordner normal in VS Code bearbeitet.
+Das Terminal läuft bereits im Container. Der Projektordner ist eingebunden; Änderungen
+bleiben auf dem Rechner gespeichert. Python und Ruff sind im Container eingerichtet.
 
-## Entwickeln mit GitHub Codespaces
+## GitHub Codespaces
 
-Voraussetzung: Die Dateien dieses Grundgerüsts wurden in das GitHub-Repository gepusht.
+1. Auf GitHub **Code → Codespaces → Create codespace on main** auswählen.
+2. Den Aufbau abwarten. Docker muss auf dem eigenen Rechner dafür nicht installiert sein.
+3. Im Codespaces-Terminal ausführen:
 
-1. Im Repository auf **Code → Codespaces → Create codespace** klicken und den
-   gewünschten Branch wählen.
-2. Codespaces verwendet `.devcontainer/devcontainer.json` und baut dieselbe
-   Django-/PostgreSQL-Grundlage wie lokal. Auf dem eigenen Rechner ist Docker dafür
-   nicht erforderlich. Codespaces-Verfügbarkeit und Kosten hängen vom GitHub-Konto ab.
-3. Nach dem Aufbau im Bereich **Ports** den Port **8000** im Browser öffnen.
-   Den Port privat lassen. Die konkrete Codespace-Adresse wird für Django erlaubt.
-4. Im Terminal `python manage.py createsuperuser` ausführen und anschließend den
-   Pfad `/admin/` öffnen.
+   ```sh
+   python scripts/check_environment.py
+   ```
 
-Jeder Codespace hat seine eigene Entwicklungsdatenbank. Codespaces sind keine
-gemeinsame Testwebsite. Beim Löschen des Codespaces gehen seine lokalen Daten verloren.
-Nach Änderungen an Dockerfile oder Requirements den Container neu bauen.
+Das zeigt die Python-/Django-Version und prüft die PostgreSQL-Verbindung, ohne Tabellen
+oder ein Django-Projekt anzulegen. Es wird kein Browser-Port benötigt.
+Jeder Codespace hat seine eigene Datenbank. Verfügbarkeit und Kosten hängen vom GitHub-Konto ab.
 
-## Häufige Befehle auf dem eigenen Rechner
+**Bei einem bereits bestehenden Codespace:** Zunächst bei sauberem Arbeitsstand `git pull`
+aufrufen. Weil der Compose-Dienst von `web` zu `dev` geändert wurde, für diesen Wechsel
+am einfachsten einen neuen Codespace auf `main` öffnen; ungesicherte Arbeit vorher sichern.
+Für spätere Änderungen an Dockerfile oder Requirements reicht normalerweise **Rebuild Container**.
 
-Alle Befehle im Projektordner ausführen:
+## Befehle für den Alltag
+
+Im lokalen Terminal im Projektordner:
 
 | Aufgabe | Befehl |
 | --- | --- |
-| Start nach der Einrichtung | `docker compose up -d --wait` |
-| Images nach Requirements-Änderung neu bauen | `docker compose up --build -d --wait` |
+| Starten | `docker compose up -d --wait` |
+| Nach Requirements-Änderung neu bauen | `docker compose up --build -d --wait` |
+| Umgebung prüfen | `docker compose exec dev python scripts/check_environment.py` |
+| Container-Terminal öffnen | `docker compose exec dev bash` |
+| Code prüfen | `docker compose exec dev ruff check .` |
+| Code formatieren | `docker compose exec dev ruff format .` |
+| Logs ansehen | `docker compose logs` |
 | Stoppen, Daten behalten | `docker compose down` |
-| Protokolle ansehen | `docker compose logs -f web` |
-| Laufende Dienste anzeigen | `docker compose ps` |
-| Tests mit PostgreSQL | `docker compose exec web python manage.py test` |
-| Django-Konfiguration prüfen | `docker compose exec web python manage.py check` |
-| Code prüfen | `docker compose exec web ruff check .` |
-| Code formatieren | `docker compose exec web ruff format .` |
-| Migrationen nach Modelländerung erstellen | `docker compose exec web python manage.py makemigrations` |
-| Migrationen anwenden | `docker compose exec web python manage.py migrate` |
 
-Im Dev-Container-Terminal die Befehle jeweils ohne `docker compose exec web` ausführen.
-Django wendet vorhandene Migrationen zusätzlich bei jedem Containerstart an.
-Neue Migrationsdateien immer zusammen mit den Modelländerungen committen.
-
-## Wie die Umgebung aufgebaut ist
-
-- **Python 3.12.14**, **Django 5.2.18 LTS**, **PostgreSQL 17.11**, **Ruff 0.17.2**.
-- `Dockerfile`: Entwicklungsimage inklusive Git, Python-Paketen und Ruff;
-  Anwendung läuft als Benutzer `app`, nicht als root.
-- `compose.yaml`: Anwendung und Datenbank mit Bereitschaftsprüfungen.
-- `compose.setup.yaml` / `scripts/setup.py`: Erstellt `.env` mit zufälligen lokalen
-  Schlüsseln. Vorhandene `.env` bleibt unverändert.
-- `requirements.txt`: Anwendungsabhängigkeiten mit festen Versionen;
-  `requirements-dev.txt`: zusätzliche Entwicklungswerkzeuge.
-- `config/`: Django-Einstellungen und URLs; `accounts/`: eigenes Benutzermodell.
-- `core/`: Startseite, `/health/` inklusive Datenbankprüfung und Grundlagentests.
-- `.editorconfig`, `.gitattributes`, `pyproject.toml`: gemeinsame Formatierungsregeln.
-- `.github/workflows/ci.yml`: Baut auf GitHub die Container, prüft Code, Migrationen,
-  Tests mit PostgreSQL und den HTTP-Zugang bei Pushes und Pull Requests.
-
-Versionen werden bewusst gemeinsam aktualisiert und mit CI geprüft. Feste Versions-Tags
-sind keine unveränderlichen Image-Digests; Basisimages können unter demselben Tag
-neu gebaut werden. Betriebssystem-/Architekturunterschiede können weiterhin bestehen.
+In VS Code im Dev Container oder in Codespaces das Präfix `docker compose exec dev`
+weglassen. Der Container wartet im Hintergrund, bis ihr darin Befehle ausführt.
 
 ## Einstellungen und Daten
 
-`.env.example` beschreibt die Einstellungen. `.env` enthält persönliche Werte und
-gehört nicht ins Git-Repository. Die Dateien werden durch `.gitignore` und
-`.dockerignore` ausgeschlossen. Django erhält Einstellungen über die Container-Umgebung.
+- Versionen: Python 3.12.14, Django 5.2.18, PostgreSQL 17.11 und Ruff 0.17.2.
+- `.env.example` beschreibt die Datenbankeinstellungen. Die Einrichtung erzeugt daraus
+  eine persönliche `.env` mit zufälligem Passwort und erhält vorhandene Dateien.
+- `.env` gehört nicht ins Git-Repository. Alte Django-Einträge aus der früheren
+  Einrichtung werden nicht mehr verwendet und können aus der persönlichen `.env` entfernt werden.
+- PostgreSQL speichert Daten in einem Docker-Volume und veröffentlicht keinen Host-Port.
+- `docker compose down` erhält Daten. **`docker compose down --volumes` löscht die
+  lokale Datenbank** und ist nur für einen bewusst gewünschten Reset gedacht.
+- Änderungen am Passwort in `.env` ändern kein Passwort einer bereits angelegten Datenbank.
+- Ein Git-Push überträgt Code, keine Datenbankinhalte. Ein Docker-Volume ist kein Backup.
 
-Die Datenbank liegt im Docker-Volume `postgres_data`. Ein normaler Neustart, ein
-Image-Neubau oder `docker compose down` löscht ihre Daten nicht. **`docker compose down
---volumes` löscht dagegen die lokale Datenbank.** Diesen Befehl nur für einen bewusst
-gewünschten vollständigen Reset verwenden. Ein Volume ersetzt kein Backup.
+## Automatische Prüfungen und Stand
 
-Das PostgreSQL-Passwort wird beim ersten Anlegen des Datenbank-Volumes gesetzt.
-Eine spätere Änderung in `.env` ändert kein Passwort in einer bestehenden Datenbank.
+GitHub Actions baut die Container, prüft Formatierung und Paketabhängigkeiten und führt
+`check_environment.py` gegen PostgreSQL aus. Es gibt noch keine Anwendungstests, weil
+noch keine Anwendung existiert.
 
-## Zusammenarbeit zu dritt
+Auf dem Einrichtungsrechner ist Docker nicht verfügbar: Der Containerstart und der
+Codespaces-Aufbau müssen daher auf GitHub beziehungsweise in Codespaces geprüft werden.
+Lokale Syntax-/Formatprüfungen ersetzen diese Prüfung nicht.
 
-1. Vor Arbeitsbeginn Änderungen des Teams holen (`git pull`, bei sauberem Arbeitsstand).
-2. Für die Aufgabe einen Branch anlegen, beispielsweise `git switch -c feature/objekte`.
-3. Entwickeln, formatieren und testen.
-4. Änderungen einschließlich Migrationen committen und den Branch pushen.
-5. Pull Request erstellen und von einer anderen Person prüfen lassen.
+## Zusammenarbeit
 
-Der GitHub-Workflow liefert Prüfungen, aber eine verpflichtende Freigabe und verpflichtende
-CI-Prüfungen müssen zusätzlich in den GitHub-Branch-Regeln eingerichtet werden.
-Ein Push überträgt Code, keine lokalen Datenbankinhalte.
+Änderungen in eigenen Branches entwickeln und über Pull Requests zusammenführen.
+Neue Pakete mit festen Versionen in den Requirements ergänzen und das Image neu bauen.
+Das Django-Projekt und seine Datenbankanbindung richten wir erst nach der Teamabsprache ein.
+Hosting, Deployment und eine gemeinsame Testwebsite sind noch nicht Bestandteil dieses Repositories.
 
-Für gemeinsame Vorführungen wird später eine separate Testwebsite mit eigener
-Testdatenbank eingerichtet. Produktivbetrieb bekommt eine getrennte Datenbank.
-Dieses Repository enthält noch kein Hosting und keinen automatischen Deployment-Ablauf.
+## Bei Problemen
 
-## Probleme beim Start
-
-- **Docker nicht gefunden / keine Verbindung:** Docker Desktop starten und Terminal
-  neu öffnen. `docker info` und `docker compose version` müssen funktionieren.
-- **Port 8000 belegt:** In `.env` `WEB_PORT=8001` setzen, erneut starten und
-  `http://localhost:8001` öffnen.
-- **Fehler beim Download:** Internetzugang, Proxy und GitHub-Zugriff prüfen, dann erneut starten.
-- **Migration oder Anmeldung scheitert:** `docker compose logs web db` ansehen.
-  Nicht einfach das Datenbank-Volume löschen.
-- **CSRF-Fehler bei anderer Testadresse:** Exakte Adresse inklusive `https://` in
-  `DJANGO_CSRF_TRUSTED_ORIGINS`, Hostname ohne Protokoll in `DJANGO_ALLOWED_HOSTS`
-  eintragen und Container neu erstellen. Keine pauschalen Wildcards verwenden.
-- **Geänderte Requirements wirken nicht:** Image neu bauen; im Dev Container
-  **Dev Containers: Rebuild Container** verwenden.
-
-## Entwicklungsumgebung, keine Produktionsinstallation
-
-Der Django-Entwicklungsserver und `DEBUG=true` sind für Entwicklung gedacht.
-Vor einem Kundenbetrieb fehlen unter anderem Produktionsserver, HTTPS-Konfiguration,
-Backups, Monitoring und die fachlichen Berechtigungs-/Mandantenregeln. Nur fiktive
-Testdaten verwenden. Die Anwendung ist lokal an `127.0.0.1` gebunden; PostgreSQL
-veröffentlicht keinen Port auf dem Rechner.
-
-## Validierung dieses Grundgerüsts
-
-Die lokalen Prüfungen sind in `docs/VALIDATION.md` dokumentiert. Die maßgebliche
-Container-/PostgreSQL-Prüfung übernimmt der GitHub-Workflow beim ersten Push.
-
-Offizielle Grundlagen: [Django](https://docs.djangoproject.com/en/5.2/),
-[Dev Containers](https://code.visualstudio.com/docs/devcontainers/create-dev-container),
-[Codespaces](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers).
+- `docker info` und `docker compose version` müssen lokal funktionieren; gegebenenfalls Docker Desktop starten.
+- Bei Startfehlern `docker compose logs` ansehen und Internetzugang prüfen.
+- Bei unveränderten Paketversionen trotz bearbeiteter Requirements das Image neu bauen.
+- Wenn VS Code keine Dateien schreiben kann, Benutzer-/Dateirechte des eingebundenen Ordners prüfen.

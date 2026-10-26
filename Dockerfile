@@ -14,5 +14,4 @@ COPY requirements.txt requirements-dev.txt ./
 RUN pip install --no-cache-dir -r requirements-dev.txt
 COPY --chown=app:app . .
 USER app
-EXPOSE 8000
-CMD ["sh", "scripts/run-dev.sh"]
+CMD ["sleep", "infinity"]
